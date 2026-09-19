@@ -1,0 +1,19 @@
+{
+  "name": "@deccan/reader",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Deccan Birders — Independent Reader application. Retrieves and displays sightings from Swarm using published references.",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@ethersphere/bee-js": "13.1.0",
+    "@deccan/sighting-format": "file:../shared"
+  },
+  "devDependencies": {
+    "vite": "^6.0.0"
+  }
+}

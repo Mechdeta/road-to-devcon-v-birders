@@ -1,0 +1,15 @@
+{
+  "name": "@deccan/sighting-format",
+  "version": "1.0.0",
+  "description": "Self-describing binary format for Deccan Birders sighting records. Standalone — no app dependencies.",
+  "type": "module",
+  "main": "sighting-format.js",
+  "exports": {
+    ".": "./sighting-format.js"
+  },
+  "scripts": {
+    "test": "node --test sighting-format.test.js"
+  },
+  "keywords": ["swarm", "sighting", "format", "deccan-birders"],
+  "license": "MIT"
+}

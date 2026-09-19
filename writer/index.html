@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Deccan Birders — Record bird sightings and store them permanently on Swarm. No export needed." />
+  <title>Deccan Birders — Sighting Recorder</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/src/styles.css" />
+</head>
+<body>
+  <div id="app">
+    <!-- Header -->
+    <header class="app-header">
+      <div class="header-content">
+        <div class="brand">
+          <span class="brand-icon">🦚</span>
+          <h1>Deccan Birders</h1>
+        </div>
+        <div class="auth-section" id="auth-section">
+          <button id="btn-connect" class="btn btn-primary">
+            Sign in with Swarm ID
+          </button>
+          <div id="user-info" class="user-info hidden">
+            <span class="user-badge" id="user-name"></span>
+            <span class="capability-badge" id="capability-badge"></span>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main content -->
+    <main class="main-content">
+      <!-- Status banner -->
+      <div id="status-banner" class="status-banner hidden"></div>
+
+      <!-- Sighting form -->
+      <section class="form-section">
+        <h2 class="section-title">Record a Sighting</h2>
+
+        <form id="sighting-form" class="sighting-form">
+          <!-- Species -->
+          <div class="form-group">
+            <label for="field-species" class="form-label">Species *</label>
+            <input
+              type="text"
+              id="field-species"
+              name="species"
+              required
+              placeholder="e.g. Indian Peafowl"
+              class="form-input"
+            />
+          </div>
+
+          <!-- Location -->
+          <div class="form-row">
+            <div class="form-group">
+              <label for="field-lat" class="form-label">Latitude *</label>
+              <input
+                type="number"
+                id="field-lat"
+                name="lat"
+                required
+                step="any"
+                min="-90"
+                max="90"
+                placeholder="18.5204"
+                class="form-input"
+              />
+            </div>
+            <div class="form-group">
+              <label for="field-lng" class="form-label">Longitude *</label>
+              <input
+                type="number"
+                id="field-lng"
+                name="lng"
+                required
+                step="any"
+                min="-180"
+                max="180"
+                placeholder="73.8567"
+                class="form-input"
+              />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="field-location-name" class="form-label">Location Name</label>
+            <input
+              type="text"
+              id="field-location-name"
+              name="locationName"
+              placeholder="e.g. Pashan Lake, Pune"
+              class="form-input"
+            />
+          </div>
+
+          <!-- Date/time -->
+          <div class="form-group">
+            <label for="field-observed-at" class="form-label">Date & Time *</label>
+            <input
+              type="datetime-local"
+              id="field-observed-at"
+              name="observedAt"
+              required
+              class="form-input"
+            />
+          </div>
+
+          <!-- Count -->
+          <div class="form-group">
+            <label for="field-count" class="form-label">Count</label>
+            <input
+              type="number"
+              id="field-count"
+              name="count"
+              min="0"
+              step="1"
+              placeholder="1"
+              class="form-input"
+            />
+          </div>
+
+          <!-- Observer -->
+          <div class="form-group">
+            <label for="field-observer" class="form-label">Observer</label>
+            <input
+              type="text"
+              id="field-observer"
+              name="observer"
+              placeholder="Your name"
+              class="form-input"
+            />
+          </div>
+
+          <!-- Notes -->
+          <div class="form-group">
+            <label for="field-notes" class="form-label">Notes</label>
+            <textarea
+              id="field-notes"
+              name="notes"
+              rows="3"
+              placeholder="Observation details..."
+              class="form-input"
+            ></textarea>
+          </div>
+
+          <!-- Submit -->
+          <button type="submit" id="btn-submit" class="btn btn-submit" disabled>
+            <span class="btn-text">Upload Sighting</span>
+            <span class="btn-spinner hidden" id="submit-spinner"></span>
+          </button>
+        </form>
+      </section>
+
+      <!-- Upload result -->
+      <section id="result-section" class="result-section hidden">
+        <h2 class="section-title">✅ Sighting Uploaded</h2>
+        <div class="result-card">
+          <div class="result-field">
+            <label>Swarm Reference</label>
+            <div class="ref-display">
+              <code id="result-reference" class="ref-code"></code>
+              <button id="btn-copy-ref" class="btn btn-small" title="Copy reference">📋</button>
+            </div>
+          </div>
+          <div class="result-field">
+            <label>Open in Reader</label>
+            <a id="result-reader-link" href="#" target="_blank" class="reader-link"></a>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="app-footer">
+      <p>Records are stored on Swarm — share the reference to let anyone view your sighting.</p>
+    </footer>
+  </div>
+
+  <script type="module" src="/src/main.js"></script>
+</body>
+</html>

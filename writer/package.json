@@ -1,0 +1,20 @@
+{
+  "name": "@deccan/writer",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Deccan Birders — Writer application. Authenticate with Swarm ID, record sightings, upload to Swarm.",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "test": "node --test src/**/*.test.js"
+  },
+  "dependencies": {
+    "@ethersphere/bee-js": "13.1.0",
+    "@deccan/sighting-format": "file:../shared"
+  },
+  "devDependencies": {
+    "vite": "^6.0.0"
+  }
+}

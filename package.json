@@ -1,0 +1,18 @@
+{
+  "name": "deccan-birders",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Take your records with you — Deccan Birders. Two independent apps sharing bird sighting records via Swarm.",
+  "workspaces": [
+    "shared",
+    "writer",
+    "reader"
+  ],
+  "scripts": {
+    "test": "npm run test:shared && npm run test:writer",
+    "test:shared": "npm test --workspace=shared",
+    "test:writer": "npm test --workspace=writer",
+    "dev:writer": "npm run dev --workspace=writer",
+    "dev:reader": "npm run dev --workspace=reader"
+  }
+}

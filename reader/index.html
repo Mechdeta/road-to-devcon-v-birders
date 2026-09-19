@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Deccan Birders — View bird sightings stored on Swarm. Paste a reference or use a shared link." />
+  <title>Deccan Birders — Sighting Viewer</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/src/styles.css" />
+</head>
+<body>
+  <div id="app">
+    <!-- Header -->
+    <header class="app-header">
+      <div class="header-content">
+        <div class="brand">
+          <span class="brand-icon">🦚</span>
+          <h1>Deccan Birders — Viewer</h1>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main content -->
+    <main class="main-content">
+      <!-- Status banner -->
+      <div id="status-banner" class="status-banner hidden"></div>
+
+      <!-- Reference input -->
+      <section class="input-section">
+        <h2 class="section-title">View a Sighting</h2>
+        <p class="section-desc">
+          Paste a Swarm reference (64-character hex string) to view a sighting record.
+          Records are retrieved directly from the Swarm network — no export or account needed.
+        </p>
+
+        <form id="ref-form" class="ref-form">
+          <div class="form-group">
+            <label for="field-reference" class="form-label">Swarm Reference</label>
+            <input
+              type="text"
+              id="field-reference"
+              name="reference"
+              required
+              pattern="[a-fA-F0-9]{64}"
+              minlength="64"
+              maxlength="64"
+              placeholder="Paste 64-character hex reference..."
+              class="form-input ref-input"
+              autocomplete="off"
+              spellcheck="false"
+            />
+          </div>
+          <button type="submit" id="btn-fetch" class="btn btn-primary">
+            <span class="btn-text">Fetch Sighting</span>
+            <span class="btn-spinner hidden" id="fetch-spinner"></span>
+          </button>
+        </form>
+      </section>
+
+      <!-- Sighting display -->
+      <section id="sighting-section" class="sighting-section hidden">
+        <h2 class="section-title" id="sighting-species"></h2>
+
+        <div class="sighting-card">
+          <div class="sighting-grid">
+            <!-- Location -->
+            <div class="detail-group">
+              <span class="detail-icon">📍</span>
+              <div>
+                <div class="detail-label">Location</div>
+                <div class="detail-value" id="sighting-location"></div>
+                <div class="detail-sub" id="sighting-coords"></div>
+              </div>
+            </div>
+
+            <!-- Date/time -->
+            <div class="detail-group">
+              <span class="detail-icon">📅</span>
+              <div>
+                <div class="detail-label">Observed</div>
+                <div class="detail-value" id="sighting-date"></div>
+              </div>
+            </div>
+
+            <!-- Count -->
+            <div class="detail-group" id="detail-count-group">
+              <span class="detail-icon">🔢</span>
+              <div>
+                <div class="detail-label">Count</div>
+                <div class="detail-value" id="sighting-count"></div>
+              </div>
+            </div>
+
+            <!-- Observer -->
+            <div class="detail-group" id="detail-observer-group">
+              <span class="detail-icon">👤</span>
+              <div>
+                <div class="detail-label">Observer</div>
+                <div class="detail-value" id="sighting-observer"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Notes -->
+          <div class="notes-section" id="detail-notes-group">
+            <div class="detail-label">Notes</div>
+            <div class="detail-value notes-text" id="sighting-notes"></div>
+          </div>
+
+          <!-- Provenance -->
+          <div class="provenance">
+            <div class="detail-label">Swarm Reference</div>
+            <code class="ref-code" id="sighting-ref"></code>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="app-footer">
+      <p>Records are fetched directly from Swarm — this reader is independent of the writing application.</p>
+    </footer>
+  </div>
+
+  <script type="module" src="/src/main.js"></script>
+</body>
+</html>
