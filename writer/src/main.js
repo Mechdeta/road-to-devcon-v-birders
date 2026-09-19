@@ -75,10 +75,18 @@ onConnectionChange((state) => {
 // ---------------------------------------------------------------------------
 
 btnConnect.addEventListener('click', async () => {
+  const originalText = btnConnect.textContent;
+  btnConnect.disabled = true;
+  btnConnect.textContent = 'Connecting...';
+  hideBanner();
+
   try {
     await connect();
   } catch (err) {
     showBanner('error', `Sign-in failed: ${err.message}`);
+  } finally {
+    btnConnect.disabled = false;
+    btnConnect.textContent = originalText;
   }
 });
 
@@ -174,7 +182,9 @@ function hideBanner() {
 // Initialise
 // ---------------------------------------------------------------------------
 
-initSwarmId();
+initSwarmId().catch((err) => {
+  console.warn('[main] Swarm ID background initialization notice:', err.message);
+});
 
 // Set default date/time to now
 const observedAtInput = document.getElementById('field-observed-at');

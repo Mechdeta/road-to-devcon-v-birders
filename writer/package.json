@@ -11,8 +11,9 @@
     "test": "node --test src/**/*.test.js"
   },
   "dependencies": {
+    "@deccan/sighting-format": "file:../shared",
     "@ethersphere/bee-js": "13.1.0",
-    "@deccan/sighting-format": "file:../shared"
+    "@snaha/swarm-id": "^0.4.1"
   },
   "devDependencies": {
     "vite": "^6.0.0"
