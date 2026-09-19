@@ -1,58 +1,67 @@
-# Deccan Birders — "Take your records with you"
+# Deccan Birders — Decentralized Bird Sightings
 
-> Meera files a sighting in one app and opens it in a completely different one,
-> and nobody had to export anything.
+> **Road To Devcon V — Problem 2: "Take your records with you"**
 
-## Architecture
+A decentralized bird-sighting record system built on the **Swarm decentralized storage network**.
 
-Two genuinely separate applications sharing a documented, versioned binary
-record format (DBIR) stored on the Swarm network.
+A birder can create a sighting in the Writer application, store it directly on Swarm, receive a content-addressed reference, and share that reference with anyone.
 
-```
-shared/   → @deccan/sighting-format   (standalone format codec + FORMAT.md spec)
-writer/   → @deccan/writer            (Swarm ID auth → form → encode → upload)
-reader/   → @deccan/reader            (reference input → download → decode → display)
-```
+A completely separate Reader application can retrieve and display the record directly from Swarm — **without the original Writer application, without an export/import step, and without a Swarm ID account.**
 
-The **reader has zero imports from the writer**. Both applications use the
-shared format package for encode/decode only.
+---
 
-## Record Discovery
+## 🎯 Challenge
 
-Records are identified by their **Swarm content address** — a 64-character
-hex string returned after upload. This is a standard Swarm reference, not an
-application-specific URL.
+The core requirement is:
 
-Sharing methods:
-- Copy the hex reference
-- Share a deep-link URL: `<reader-origin>/?ref=<hex-reference>`
+> **"Meera files a sighting in one app and opens it in a completely different one, and nobody had to export anything."**
 
-The reader downloads from `GET /bytes/<ref>` on the same gateway.
+This project implements that workflow using:
 
-## Quick Start
+- Swarm decentralized storage
+- Swarm ID authentication
+- Swarm's subsidized gateway
+- Content-addressed records
+- A documented self-describing binary format
+- Completely independent Writer and Reader applications
 
-```bash
-npm install
-npm run dev:writer   # http://localhost:5173
-npm run dev:reader   # http://localhost:5174
-```
+---
 
-## Testing
+# 🚀 Live Demo
 
-```bash
-npm test             # runs shared + writer tests
-```
+## Writer
 
-## Record Format
+Create and upload bird sightings.
 
-See [shared/FORMAT.md](shared/FORMAT.md) for the complete DBIR specification.
+**Live:**  
+https://road-to-devcon-v-birders-writer.vercel.app/
 
-## Technical Details
+The Writer requires Swarm ID authentication before uploading.
 
-- **Swarm gateway**: `https://api.gateway.ethswarm.org/` (subsidised)
-- **Swarm ID**: `https://swarm-id.snaha.net` (browser auth via iframe)
-- **bee-js**: v13.1.0 (namespace APIs: `bee.data.upload`, `bee.data.download`)
-- **Upload**: `POST /bytes` via `bee.data.upload(NULL_STAMP, data)` — no pin, no tag, no ACT
-- **Download**: `GET /bytes/:ref` via `bee.data.download(ref)`
-- **No Bee node required**
-- **No credentials in source code**
+---
+
+## Independent Reader
+
+Retrieve a sighting directly from Swarm using its content reference.
+
+**Live:**  
+https://road-to-devcon-v-birders-reader.vercel.app/
+
+No account is required to read a record.
+
+---
+
+## 🌐 Public Example Record
+
+Here is a real record uploaded to Swarm through the production Writer.
+
+### Peacock — Koradi Lake, Nagpur
+
+**Open directly in the Reader:**
+
+https://road-to-devcon-v-birders-reader.vercel.app/?ref=d2eb98083a7f9ce0f7e782727496e2ef3051c359643f587331abf1918ce3a6e4
+
+**Swarm reference:**
+
+```text
+d2eb98083a7f9ce0f7e782727496e2ef3051c359643f587331abf1918ce3a6e4
