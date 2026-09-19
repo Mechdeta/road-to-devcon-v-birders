@@ -38,7 +38,7 @@ const sightingForm = document.getElementById('sighting-form');
  */
 const READER_BASE_URL = window.location.hostname === 'localhost'
   ? 'http://localhost:5174'
-  : '../reader';
+  : 'https://road-to-devcon-v-birders-reader.vercel.app';
 
 // ---------------------------------------------------------------------------
 // Auth state → UI binding

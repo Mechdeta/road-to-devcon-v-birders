@@ -11,60 +11,14 @@ import { describe, it, mock, beforeEach } from 'node:test';
 import assert from 'node:assert/strict';
 
 // ---------------------------------------------------------------------------
-// Mock modules — we replace auth and swarm with controllable stubs
+// Production imports
 // ---------------------------------------------------------------------------
 
-// We test the upload controller's logic by reimplementing its flow
-// with injected dependencies, since the module uses static imports.
-// This tests the LOGIC — the actual module wiring is tested via integration.
-
-import { encode } from '@deccan/sighting-format';
-
-/**
- * Simulate the upload controller logic with injectable dependencies.
- */
-function createUploadController({ getConnectionState, uploadBytes }) {
-  class UploadError extends Error {
-    constructor(reason, message) {
-      super(message);
-      this.name = 'UploadError';
-      this.reason = reason;
-    }
-  }
-
-  async function uploadSighting(sightingData) {
-    const state = getConnectionState();
-
-    if (!state.identity) {
-      throw new UploadError('NOT_AUTHENTICATED', 'You must sign in with Swarm ID before uploading.');
-    }
-
-    if (!state.canUpload) {
-      throw new UploadError('NO_UPLOAD_CAPABILITY', 'Upload is not available.');
-    }
-
-    let bytes;
-    try {
-      bytes = encode(sightingData);
-    } catch (err) {
-      throw new UploadError('SERIALISATION_FAILED', `Could not serialise: ${err.message}`);
-    }
-
-    try {
-      return await uploadBytes(bytes);
-    } catch (err) {
-      if (err?.status === 402) {
-        throw new UploadError('GATEWAY_PAYMENT_REQUIRED', 'Postage exhausted');
-      }
-      if (err?.name === 'TypeError') {
-        throw new UploadError('NETWORK_ERROR', 'Network unreachable');
-      }
-      throw new UploadError('UPLOAD_FAILED', `Upload failed: ${err.message}`);
-    }
-  }
-
-  return { uploadSighting, UploadError };
-}
+import {
+  createUploadController,
+  uploadSighting,
+  UploadError,
+} from './upload-controller.js';
 
 // ---------------------------------------------------------------------------
 // Test data
@@ -128,6 +82,13 @@ describe('Upload Controller — capability gate', () => {
 
     assert.strictEqual(mockUpload.mock.callCount(), 1);
     assert.strictEqual(ref, 'abc123');
+  });
+
+  it('default export uploadSighting throws NOT_AUTHENTICATED when unauthenticated', async () => {
+    await assert.rejects(
+      () => uploadSighting(VALID_SIGHTING),
+      (err) => err instanceof UploadError && err.reason === 'NOT_AUTHENTICATED'
+    );
   });
 });
 
