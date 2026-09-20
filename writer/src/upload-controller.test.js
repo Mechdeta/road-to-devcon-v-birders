@@ -293,6 +293,104 @@ describe('Upload Controller — capability gate', () => {
     assert.strictEqual(ref, 'abc123');
   });
 
+  // Additional tests for uploadMode === 'unavailable' gate (TASK 1)
+  it('rejects when uploadMode is unavailable and canUpload is true (unavailable+canUpload true)', async () => {
+    const mockUpload = mock.fn();
+    const { uploadSighting, UploadError } = createUploadController({
+      getConnectionInfo: () => ({
+        identity: { name: 'Meera' },
+        canUpload: true, // important: canUpload is true but uploadMode unavailable
+        uploadMode: 'unavailable',
+        uploadUnavailableReason: 'no-stamp', // we can set any reason, but gate should reject before checking reason
+      }),
+      uploadBytes: mockUpload,
+    });
+
+    await assert.rejects(
+      () => uploadSighting(VALID_SIGHTING),
+      (err) => err instanceof UploadError && err.reason === 'NO_UPLOAD_CAPABILITY'
+    );
+    assert.strictEqual(mockUpload.mock.callCount(), 0);
+  });
+
+  it('gives no-stamp specific message when uploadMode is unavailable and reason is no-stamp', async () => {
+    const mockUpload = mock.fn();
+    const { uploadSighting, UploadError } = createUploadController({
+      getConnectionInfo: () => ({
+        identity: { name: 'Meera' },
+        canUpload: true, // gate 3 runs regardless of canUpload
+        uploadMode: 'unavailable',
+        uploadUnavailableReason: 'no-stamp',
+      }),
+      uploadBytes: mockUpload,
+    });
+
+    await assert.rejects(
+      () => uploadSighting(VALID_SIGHTING),
+      (err) => err instanceof UploadError &&
+               err.reason === 'NO_UPLOAD_CAPABILITY' &&
+               err.message.includes('lacks a postage stamp')
+    );
+    assert.strictEqual(mockUpload.mock.callCount(), 0);
+  });
+
+  it('gives stamper-failed specific message when uploadMode is unavailable and reason is stamper-failed', async () => {
+    const mockUpload = mock.fn();
+    const { uploadSighting, UploadError } = createUploadController({
+      getConnectionInfo: () => ({
+        identity: { name: 'Meera' },
+        canUpload: true,
+        uploadMode: 'unavailable',
+        uploadUnavailableReason: 'stamper-failed',
+      }),
+      uploadBytes: mockUpload,
+    });
+
+    await assert.rejects(
+      () => uploadSighting(VALID_SIGHTING),
+      (err) => err instanceof UploadError &&
+               err.reason === 'NO_UPLOAD_CAPABILITY' &&
+               err.message.includes('stamper could not be prepared')
+    );
+    assert.strictEqual(mockUpload.mock.callCount(), 0);
+  });
+
+  it('allows subsidised reason to pass the uploadMode unavailable gate when canUpload is true', async () => {
+    const mockUpload = mock.fn(async () => 'reference123');
+    const { uploadSighting } = createUploadController({
+      getConnectionInfo: () => ({
+        identity: { name: 'Meera' },
+        canUpload: true,
+        uploadMode: 'unavailable',
+        uploadUnavailableReason: 'subsidised',
+      }),
+      uploadBytes: mockUpload,
+    });
+
+    const ref = await uploadSighting(VALID_SIGHTING);
+
+    assert.strictEqual(mockUpload.mock.callCount(), 1);
+    assert.strictEqual(ref, 'reference123');
+  });
+
+  it('allows user-stamp reason to pass the uploadMode unavailable gate when canUpload is true', async () => {
+    const mockUpload = mock.fn(async () => 'reference456');
+    const { uploadSighting } = createUploadController({
+      getConnectionInfo: () => ({
+        identity: { name: 'Meera' },
+        canUpload: true,
+        uploadMode: 'unavailable',
+        uploadUnavailableReason: 'user-stamp',
+      }),
+      uploadBytes: mockUpload,
+    });
+
+    const ref = await uploadSighting(VALID_SIGHTING);
+
+    assert.strictEqual(mockUpload.mock.callCount(), 1);
+    assert.strictEqual(ref, 'reference456');
+  });
+
   it('default export uploadSighting throws NOT_AUTHENTICATED when unauthenticated', async () => {
     await assert.rejects(
       () => uploadSighting(VALID_SIGHTING),

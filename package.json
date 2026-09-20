@@ -13,6 +13,8 @@
     "test:shared": "npm test --workspace=shared",
     "test:writer": "npm test --workspace=writer",
     "dev:writer": "npm run dev --workspace=writer",
-    "dev:reader": "npm run dev --workspace=reader"
+    "dev:reader": "npm run dev --workspace=reader",
+    "audit:checks": "node scripts/audit-checks.mjs",
+    "check": "npm test && npm run audit:checks"
   }
 }

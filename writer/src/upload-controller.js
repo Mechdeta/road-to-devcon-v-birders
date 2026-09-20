@@ -321,11 +321,21 @@ export function createUploadController(deps = {}) {
 
     // ── Gate 3: Upload mode check ───────────────────────────────────────
     // Treat uploadMode === 'unavailable' as a failure regardless of canUpload.
+    // Only throw for specific reasons; other reasons (e.g. subsidised, user-stamp) are handled by the canUpload gate.
     if (conn.uploadMode === 'unavailable') {
-      throw new UploadError(
-        'NO_UPLOAD_CAPABILITY',
-        'Upload is unavailable because the Swarm ID upload mode is unavailable.'
-      );
+      if (conn.uploadUnavailableReason === 'no-stamp') {
+        throw new UploadError(
+          'NO_UPLOAD_CAPABILITY',
+          'Upload is unavailable because your Swarm ID account lacks a postage stamp and no subsidised gateway is available.'
+        );
+      }
+      if (conn.uploadUnavailableReason === 'stamper-failed') {
+        throw new UploadError(
+          'NO_UPLOAD_CAPABILITY',
+          'Upload is unavailable because the Swarm ID stamper could not be prepared.'
+        );
+      }
+      // For other reasons (including subsidised, user-stamp) we do not throw here -> let gate 4 handle it.
     }
 
     // ── Gate 4: Upload capability check ──────────────────────────────────
