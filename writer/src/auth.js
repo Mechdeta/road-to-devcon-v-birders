@@ -77,6 +77,26 @@ export function getConnectionState() {
 }
 
 /**
+ * Get the underlying SwarmIdClient instance (if initialized).
+ * @returns {object|null}
+ */
+export function getClient() {
+  return client;
+}
+
+/**
+ * Re-reads connection info directly from the Swarm ID client.
+ * Throws if the client is not yet initialized.
+ * @returns {object}
+ */
+export function getConnectionInfo() {
+  if (!client) {
+    throw new Error('Swarm ID is not initialised.');
+  }
+  return client.connectionInfo;
+}
+
+/**
  * Initialise the Swarm ID client (embeds hidden iframe).
  * Ensures initialization happens exactly once (idempotent).
  *

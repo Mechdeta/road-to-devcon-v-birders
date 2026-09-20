@@ -127,8 +127,13 @@ sightingForm.addEventListener('submit', async (e) => {
     resetForm();
   } catch (err) {
     if (err instanceof UploadError) {
-      // Show the specific reason from the upload controller
-      showBanner('error', `${err.message} (${err.reason})`);
+      // Show title, message, next, and reason code from the upload controller
+      showBanner('error', `${err.title}: ${err.message}`, {
+        title: err.title,
+        message: err.message,
+        next: err.next,
+        reason: err.reason,
+      });
     } else {
       showBanner('error', `Unexpected error: ${err.message}`);
     }
@@ -167,10 +172,43 @@ function setLoading(loading) {
 /**
  * @param {'success'|'error'|'warning'} type
  * @param {string} message
+ * @param {{ title?: string, message?: string, next?: string, reason?: string } | null} [details]
  */
-function showBanner(type, message) {
-  statusBanner.textContent = message;
+function showBanner(type, message, details = null) {
   statusBanner.className = `status-banner banner-${type}`;
+  statusBanner.replaceChildren();
+
+  if (details) {
+    if (details.title) {
+      const titleEl = document.createElement('div');
+      titleEl.style.fontWeight = '600';
+      titleEl.style.marginBottom = '0.25rem';
+      titleEl.textContent = details.title;
+      statusBanner.appendChild(titleEl);
+    }
+    if (details.message) {
+      const msgEl = document.createElement('div');
+      msgEl.textContent = details.message;
+      statusBanner.appendChild(msgEl);
+    }
+    if (details.next) {
+      const nextEl = document.createElement('div');
+      nextEl.style.marginTop = '0.35rem';
+      nextEl.textContent = details.next;
+      statusBanner.appendChild(nextEl);
+    }
+    if (details.reason) {
+      const reasonEl = document.createElement('small');
+      reasonEl.style.display = 'block';
+      reasonEl.style.marginTop = '0.35rem';
+      reasonEl.style.opacity = '0.75';
+      reasonEl.textContent = `Error: ${details.reason}`;
+      statusBanner.appendChild(reasonEl);
+    }
+  } else {
+    statusBanner.textContent = message;
+  }
+
   statusBanner.classList.remove('hidden');
 }
 
